@@ -3,6 +3,14 @@ import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
+        validateArgs(args);
+
+        boolean[] validations = validateInputs(args);
+
+        renderResultOfValidation(args, validations);
+    }
+
+    private static void validateArgs (String[] args) {
         for (String arg : args) {
             if (arg.length() <= 2) {
                 switch (arg.substring(0, 2)) {
@@ -23,10 +31,6 @@ public class Main {
                 }
             }
         }
-
-        boolean[] validations = validateInputs(args);
-
-        renderResultOfValidation(args, validations);
     }
 
     public static String removePrefixedText(String variable) {
