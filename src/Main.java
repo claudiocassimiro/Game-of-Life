@@ -3,6 +3,12 @@ import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Adicione paramâtros ao array args!");
+
+            return;
+        }
+
         validateArgs(args);
 
         boolean[] validations = validateInputs(args);
@@ -72,7 +78,7 @@ public class Main {
 
         if (formatedPopulationValue.equals("rnd")) return true;
 
-        return Pattern.matches("^[01]+(#[01]{0,3}){2}[01]+$", formatedPopulationValue);
+        return Pattern.matches("^[01]+(#[01]{0,3}){2}[01]+$", formatedPopulationValue) || Pattern.matches("^#+$", formatedPopulationValue);
     }
 
     public static boolean validateSpeed(String speed) {
