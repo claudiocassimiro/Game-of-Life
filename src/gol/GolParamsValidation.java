@@ -1,6 +1,6 @@
 package gol;
 
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class GolParamsValidation {
@@ -72,7 +72,12 @@ public class GolParamsValidation {
 
         if (formatedPopulationValue.equals("rnd")) return true;
 
-        return Pattern.matches("^[01]+(#[01]{0,3}){2}[01]+$", formatedPopulationValue) || Pattern.matches("^#+$", formatedPopulationValue);
+        for (String value : formatedPopulationValue.split("")) {
+            if (!Objects.equals(value, "#") && !Objects.equals(value, "0") && !Objects.equals(value, "1")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean validateSpeed(String speed) {
@@ -83,27 +88,43 @@ public class GolParamsValidation {
         return speedInt >= 250 && speedInt <= 1000;
     }
 
-    public void renderResultOfValidation (boolean[] validations) {
+    public ArrayList<String> renderResultOfValidation (boolean[] validations) {
+        ArrayList<String> validationMessages = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             if (args[i].length() > 2) {
                 switch (args[i].substring(0, 2)) {
                     case "w=":
-                        System.out.println(validations[i] ? "width = " + removePrefixedText(this.args[i]) : "width = [inválido]");
+                        String validationWidth = validations[i] ? "width = " + removePrefixedText(this.args[i]) : "width = [inválido]";
+                        validationMessages.add(validationWidth);
+                        System.out.println(validationWidth);
                         break;
                     case "h=":
-                        System.out.println(validations[i] ? "height = " + removePrefixedText(this.args[i]) : "height = [inválido]");
+                        String validationHeight = validations[i] ? "height = " + removePrefixedText(this.args[i]) : "height = [inválido]";
+                        validationMessages.add(validationHeight);
+                        System.out.println(validationHeight);
                         break;
                     case "g=":
-                        System.out.println(validations[i] ? "generation = " + removePrefixedText(this.args[i]) : "generation = [inválido]");
+                        String validationGeneration = validations[i] ? "generation = " + removePrefixedText(this.args[i]) : "generation = [inválido]";
+                        validationMessages.add(validationGeneration);
+                        System.out.println(validationGeneration);
                         break;
                     case "s=":
-                        System.out.println(validations[i] ? "speed = " + removePrefixedText(this.args[i]) : "speed = [inválido]");
+                        String validationSpeed = validations[i] ? "speed = " + removePrefixedText(this.args[i]) : "speed = [inválido]";
+                        validationMessages.add(validationSpeed);
+                        System.out.println(validationSpeed);
                         break;
                     case "p=":
-                        System.out.println(validations[i] ? "population = " + removePrefixedText(this.args[i]) : "population = [inválido]");
+                        String validationPopulation = validations[i] ? "population = " + removePrefixedText(this.args[i]) : "population = [inválido]";
+                        validationMessages.add(validationPopulation);
+                        System.out.println(validationPopulation);
+                        break;
+                    default:
+                        System.out.println("Parâmetro não esperado");
                 }
             }
         }
+
+        return validationMessages;
     }
 
     public boolean[] validateInputs () {
@@ -126,16 +147,38 @@ public class GolParamsValidation {
     }
 
     public int[][] parsePopulationToGridFormat (String population) {
-        String[] populationArray = population.split("#");
+        String[] populationArray = Objects.equals(population, "rnd") ? generateRandomPopulation().split("#") : population.split("#");
 
         int[][] parsedPopulationArray = new int[populationArray.length][populationArray.length];
 
         for (int i = 0; i < populationArray.length; i++) {
             String[] splitedPopulations = populationArray[i].split("");
             for (int j = 0; j < splitedPopulations.length; j++) {
+                if (Objects.equals(splitedPopulations[j], "")) {
+                    splitedPopulations[j] = "0";
+                }
+
                 parsedPopulationArray[i][j] = Integer.parseInt(splitedPopulations[j]);
             }
         }
         return parsedPopulationArray;
+    }
+
+    private String generateRandomPopulation () {
+        Random random = new Random();
+        StringBuilder sequencia = new StringBuilder();
+        int comprimento = 72;
+
+        for (int i = 0; i < comprimento; i++) {
+            // Adiciona 0 ou 1 à sequência aleatoriamente
+            sequencia.append(random.nextInt(2));
+
+            // Adiciona '#' após cada terceiro dígito, exceto o último
+            if ((i + 1) % 3 == 0 && i < comprimento - 1) {
+                sequencia.append("#");
+            }
+        }
+
+        return sequencia.toString();
     }
 }
