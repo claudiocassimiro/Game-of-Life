@@ -1,16 +1,41 @@
 package gol;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
+/**
+ * A classe GolParamsValidation é responsável por validar e processar os parâmetros fornecidos
+ * para o Jogo da Vida (Game of Life). Ela verifica a validade dos parâmetros, formata e extrai
+ * informações relevantes, gerando mensagens de validação e retornando valores processados.
+ *
+ * <p>
+ * Esta classe inclui métodos para validar largura, altura, geração, velocidade e população do
+ * grid do Jogo da Vida. Também fornece métodos para renderizar mensagens de validação e converter
+ * a representação da população em um formato de matriz.
+ * </p>
+ *
+ * @author Claudio Cassimiro
+ * @version 1.0
+ * @since 2024-02-24
+ */
 public class GolParamsValidation {
+    /**
+     * Array de argumentos fornecidos para o Jogo da Vida.
+     */
     private String[] args;
 
+    /**
+     * Construtor da classe GolParamsValidation.
+     *
+     * @param args Array de argumentos fornecidos para o Jogo da Vida.
+     */
     public GolParamsValidation(String[] args) {
         this.args = args;
     }
 
-    public void validateArgs () {
+    /**
+     * Valida os argumentos e imprime mensagens para parâmetros ausentes.
+     */
+    public void validateArgs() {
         for (String arg : this.args) {
             if (arg.length() <= 2) {
                 switch (arg.substring(0, 2)) {
@@ -33,11 +58,23 @@ public class GolParamsValidation {
         }
     }
 
+    /**
+     * Remove o texto prefixado de uma variável.
+     *
+     * @param variable A variável da qual remover o texto prefixado.
+     * @return A variável sem o texto prefixado.
+     */
     public String removePrefixedText(String variable) {
         String aux = variable.substring(0, 2);
         return variable.replace(aux, "");
     }
 
+    /**
+     * Valida a largura do grid.
+     *
+     * @param width A largura fornecida.
+     * @return true se a largura for válida, false caso contrário.
+     */
     public boolean validateGridWidth(String width) {
         String[] validWidths = {"10", "20", "40", "80"};
 
@@ -46,6 +83,12 @@ public class GolParamsValidation {
         return Arrays.asList(validWidths).contains(formatedWidthValue);
     }
 
+    /**
+     * Valida a altura do grid.
+     *
+     * @param height A altura fornecida.
+     * @return true se a altura for válida, false caso contrário.
+     */
     public boolean validateGridHeight(String height) {
         String[] validHeights = {"10", "20", "40"};
 
@@ -54,6 +97,12 @@ public class GolParamsValidation {
         return Arrays.asList(validHeights).contains(formatedHeightValue);
     }
 
+    /**
+     * Valida o valor de geração.
+     *
+     * @param generation A geração fornecida.
+     * @return true se a geração for válida, false caso contrário.
+     */
     public boolean validateGenarationValue(String generation) {
         try {
             String formatedGenerationValue = generation.replace("g=", "");
@@ -67,6 +116,12 @@ public class GolParamsValidation {
         }
     }
 
+    /**
+     * Valida a população do grid.
+     *
+     * @param population A população fornecida.
+     * @return true se a população for válida, false caso contrário.
+     */
     public boolean validatePopulation(String population) {
         String formatedPopulationValue = population.replace("p=", "");
 
@@ -80,6 +135,12 @@ public class GolParamsValidation {
         return true;
     }
 
+    /**
+     * Valida a velocidade.
+     *
+     * @param speed A velocidade fornecida.
+     * @return true se a velocidade for válida, false caso contrário.
+     */
     public boolean validateSpeed(String speed) {
         String formatedSpeed = speed.replace("s=", "");
 
@@ -88,7 +149,13 @@ public class GolParamsValidation {
         return speedInt >= 250 && speedInt <= 1000;
     }
 
-    public ArrayList<String> renderResultOfValidation (boolean[] validations) {
+    /**
+     * Renderiza mensagens de validação e retorna uma lista de mensagens.
+     *
+     * @param validations Um array de validações correspondentes aos argumentos.
+     * @return Uma lista de mensagens de validação.
+     */
+    public ArrayList<String> renderResultOfValidation(boolean[] validations) {
         ArrayList<String> validationMessages = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             if (args[i].length() > 2) {
@@ -127,7 +194,12 @@ public class GolParamsValidation {
         return validationMessages;
     }
 
-    public boolean[] validateInputs () {
+    /**
+     * Valida todos os inputs e retorna um array de booleanos representando a validade de cada input.
+     *
+     * @return Um array de booleanos indicando a validade de cada input.
+     */
+    public boolean[] validateInputs() {
         boolean widthIsValid = validateGridWidth(this.args[0]);
         boolean heightIsValid = validateGridHeight(this.args[1]);
         boolean generationIsValid = validateGenarationValue(this.args[2]);
@@ -146,7 +218,13 @@ public class GolParamsValidation {
         return validations;
     }
 
-    public int[][] parsePopulationToGridFormat (String population) {
+    /**
+     * Converte a representação da população em um formato de matriz.
+     *
+     * @param population A população fornecida como String.
+     * @return Uma matriz representando a população.
+     */
+    public int[][] parsePopulationToGridFormat(String population) {
         String[] populationArray = Objects.equals(population, "rnd") ? generateRandomPopulation().split("#") : population.split("#");
 
         int[][] parsedPopulationArray = new int[populationArray.length][populationArray.length];
@@ -164,17 +242,22 @@ public class GolParamsValidation {
         return parsedPopulationArray;
     }
 
-    private String generateRandomPopulation () {
+    /**
+     * Gera uma população aleatória como String.
+     *
+     * @return Uma sequência de população aleatória.
+     */
+    private String generateRandomPopulation() {
         Random random = new Random();
         StringBuilder sequencia = new StringBuilder();
-        int comprimento = 72;
+        int len = 72;
 
-        for (int i = 0; i < comprimento; i++) {
+        for (int i = 0; i < len; i++) {
             // Adiciona 0 ou 1 à sequência aleatoriamente
             sequencia.append(random.nextInt(2));
 
             // Adiciona '#' após cada terceiro dígito, exceto o último
-            if ((i + 1) % 3 == 0 && i < comprimento - 1) {
+            if ((i + 1) % 3 == 0 && i < len - 1) {
                 sequencia.append("#");
             }
         }
